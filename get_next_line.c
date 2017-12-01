@@ -5,49 +5,59 @@
 /*                                                 +:+:+   +:    +:  +:+:+    */
 /*   By: bpisano <marvin@le-101.fr>                 +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
-/*   Created: 2017/11/29 13:10:53 by bpisano      #+#   ##    ##    #+#       */
-/*   Updated: 2017/11/30 20:08:00 by bpisano     ###    #+. /#+    ###.fr     */
+/*   Created: 2017/12/01 11:52:58 by bpisano      #+#   ##    ##    #+#       */
+/*   Updated: 2017/12/01 15:56:49 by bpisano     ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
-static int		index_of(char *str, char c)
+#include <stdio.h>
+int		n_index(char *str)
 {
 	int		i;
 
+	if (!str)
+		return (0);
 	i = 0;
-	while (str[i] && str[i] != c)
+	while (str[i])
+	{
+		if (str[i] == '\n')
+			return (i);
 		i++;
-	return (i);
+	}
+	return (-1);
 }
 
-static int		is_rest(char **line, char **rest)
+int		read_rest(char **line, char **rest)
 {
-	int		n_index;
+	int		n;
 
-	if (!ft_strchr(*rest, '\n'))
+	if (!*rest)
 		return (0);
-	n_index = index_of(*rest, '\n');
-	*line = ft_strjoin(*line, ft_strsub(*rest, 0, n_index));
-	*rest = ft_strsub(*rest, n_index + 1, ft_strlen(*rest) - n_index + 1);
+	if ((n = n_index(*rest)) < 0)
+	{
+		*line = ft_strjoin(*line, *rest);
+		*rest = NULL;
+		return (0);
+	}
+	*line = ft_strjoin(*line, ft_strsub(*rest, 0, n));
+	*rest = ft_strsub(*rest, n + 1, ft_strlen(*rest) - n + 1);
 	return (1);
 }
 
-static int		read_fd(int fd, char **line, char **rest)
+int		read_buff(int fd, char **line, char **rest)
 {
 	int		char_count;
-	int		n_index;
+	int		n;
 	char	buff[BUFF_SIZE + 1];
 
 	while ((char_count = read(fd, buff, BUFF_SIZE)))
 	{
-		if (ft_strchr(buff, '\n'))
-		{
-			n_index = index_of(buff, '\n');
-			*line = ft_strjoin(*line, ft_strsub(buff, 0, n_index));
-			*rest = ft_strsub(buff, n_index + 1, BUFF_SIZE - n_index + 1);
+		if ((n = n_index(buff)) >= 0)
+		{	
+			*line = ft_strjoin(*line, ft_strsub(buff, 0, n));
+			*rest = ft_strsub(buff, n + 1, BUFF_SIZE - n + 1);
 			return (1);
 		}
 		*line = ft_strjoin(*line, buff);
@@ -56,19 +66,14 @@ static int		read_fd(int fd, char **line, char **rest)
 	return (char_count > 0);
 }
 
-int				get_next_line(const int fd, char **line)
+int		get_next_line(const int fd, char **line)
 {
 	static char		*rest;
 
-	if (!line || fd < 0)
+	if (BUFF_SIZE < 1 || fd < 0 || !line)
 		return (-1);
-	*line = ft_strdup("a");
-	if (is_rest(line, &rest))
-		return (0);
-	if (rest)
-	{
-		*line = ft_strjoin(*line, rest);
-		rest = NULL;
-	}
-	return (read_fd(fd, line, &rest));
+	*line = ft_strdup("");
+	if (read_rest(line, &rest))
+		return (1);
+	return (read_buff(fd, line, &rest));
 }

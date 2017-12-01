@@ -5,13 +5,13 @@
 #                                                  +:+:+   +:    +:  +:+:+     #
 #    By: bpisano <marvin@le-101.fr>                 +:+   +:    +:    +:+      #
 #                                                  #+#   #+    #+    #+#       #
-#    Created: 2017/11/29 17:54:11 by bpisano      #+#   ##    ##    #+#        #
-#    Updated: 2017/11/30 12:45:40 by bpisano     ###    #+. /#+    ###.fr      #
+#    Created: 2017/12/01 11:50:16 by bpisano      #+#   ##    ##    #+#        #
+#    Updated: 2017/12/01 12:37:42 by bpisano     ###    #+. /#+    ###.fr      #
 #                                                          /                   #
 #                                                         /                    #
 # **************************************************************************** #
 
-NAME = next
+NAME = gnl
 
 SRC = ./get_next_line.c			\
 	  ./main.c					\
@@ -39,7 +39,14 @@ $(NAME): $(LIB) $(OBJECTS)
 	@gcc -o $(NAME) $(OBJECTS) libft/$(LIB)
 
 %.o : %.c
-	@gcc $(FLAGS) -o $@ -c $<
+	@gcc $(FLAGS) -I $(HEADS) -o $@ -c $<
+
+il:
+	@git clone https://github.com/bpisano/libft.git libft
+
+ul:
+	@rm -Rf libft
+	@git clone https://github.com/bpisano/libft.git libft
 
 clean:
 	@rm -rf $(OBJECTS)
@@ -49,7 +56,6 @@ fclean: clean
 	@rm -rf $(NAME)
 	@(cd libft/ && make fclean)
 
-re: fclean all
+re: fclean ul all
 	@echo "\n\t$(GREEN)All the process is ok$(END)\n"
 	@(cd libft/ && make re)
-
