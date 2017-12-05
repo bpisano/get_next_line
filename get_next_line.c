@@ -13,12 +13,12 @@
 
 #include "get_next_line.h"
 #include <stdio.h>
-int		n_index(char *str)
+int			n_index(const char *str)
 {
 	int		i;
 
 	if (!str)
-		return (0);
+		return (-1);
 	i = 0;
 	while (str[i])
 	{
@@ -29,51 +29,49 @@ int		n_index(char *str)
 	return (-1);
 }
 
-int		read_rest(char **line, char **rest)
-{
-	int		n;
-
-	if (!*rest)
-		return (0);
-	if ((n = n_index(*rest)) < 0)
-	{
-		*line = ft_strjoin(*line, *rest);
-		*rest = NULL;
-		return (0);
-	}
-	*line = ft_strjoin(*line, ft_strsub(*rest, 0, n));
-	*rest = ft_strsub(*rest, n + 1, ft_strlen(*rest) - n + 1);
-	return (1);
-}
-
-int		read_buff(int fd, char **line, char **rest)
-{
-	int		char_count;
-	int		n;
-	char	buff[BUFF_SIZE + 1];
-
-	while ((char_count = read(fd, buff, BUFF_SIZE)))
-	{
-		if ((n = n_index(buff)) >= 0)
-		{	
-			*line = ft_strjoin(*line, ft_strsub(buff, 0, n));
-			*rest = ft_strsub(buff, n + 1, BUFF_SIZE - n + 1);
-			return (1);
-		}
-		*line = ft_strjoin(*line, buff);
-		ft_bzero(buff, BUFF_SIZE);
-	}
-	return (char_count > 0);
-}
-
 int		get_next_line(const int fd, char **line)
 {
 	static char		*rest;
+	char			*tmp;
+	char			buff[BUFF_SIZE + 1];
+	int				char_count;
+	int				n;
+	int				r;
 
-	if (BUFF_SIZE < 1 || fd < 0 || !line)
+	/* basic tests */
+	if (!line || BUFF_SIZE < 1 || read(fd, NULL, 0) == -1)
 		return (-1);
-	*line = ft_strdup("");
-	if (read_rest(line, &rest))
+	/* rest pre-process */
+	if ((n = n_index(rest)) != -1)
+	{
+		*line = ft_strsub(rest, 0, n);
+		rest += n + 1;
 		return (1);
-	return (read_buff(fd, line, &rest));
+	}
+	/* rest init */
+	if (!rest)
+		rest = ft_strdup("");
+	r = 0;
+	ft_bzero(buff, BUFF_SIZE);
+	/* read */
+	while ((char_count = read(fd, buff, BUFF_SIZE)))
+	{
+		r = 1;
+		tmp = rest;
+		rest = ft_strjoin(rest, buff);
+		free(tmp);
+		if ((n = n_index(rest)) != -1)
+			break ;
+		ft_bzero(buff, BUFF_SIZE);
+	}
+	/* rest after process */
+	if ((n = n_index(rest)) != -1)
+	{
+		*line = ft_strsub(rest, 0, n);
+		rest += n + 1;
+		return (1);
+	}
+	else
+		*line = rest;
+	return (r);
 }
