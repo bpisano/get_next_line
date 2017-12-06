@@ -6,7 +6,7 @@
 /*   By: bpisano <marvin@le-101.fr>                 +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2017/12/01 11:53:15 by bpisano      #+#   ##    ##    #+#       */
-/*   Updated: 2017/12/06 12:53:14 by bpisano     ###    #+. /#+    ###.fr     */
+/*   Updated: 2017/12/06 19:40:02 by bpisano     ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -26,5 +26,5 @@ typedef struct		s_fd
 	struct s_fd		*next;
 }					t_fd;
 
-int		get_next_line(const int fd, char **line);
+int					get_next_line(const int fd, char **line);
 #endif
