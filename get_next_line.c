@@ -6,7 +6,7 @@
 /*   By: bpisano <marvin@le-101.fr>                 +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2017/12/01 11:52:58 by bpisano      #+#   ##    ##    #+#       */
-/*   Updated: 2017/12/01 15:56:49 by bpisano     ###    #+. /#+    ###.fr     */
+/*   Updated: 2017/12/06 13:30:01 by bpisano     ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -32,6 +32,7 @@ int			n_index(const char *str)
 int		get_next_line(const int fd, char **line)
 {
 	static char		*rest;
+	static int		c_fd;
 	char			*tmp;
 	char			buff[BUFF_SIZE + 1];
 	int				char_count;
@@ -41,6 +42,11 @@ int		get_next_line(const int fd, char **line)
 	/* basic tests */
 	if (!line || BUFF_SIZE < 1 || read(fd, NULL, 0) == -1)
 		return (-1);
+	if (c_fd != fd)
+	{
+		rest = ft_strdup("");
+		c_fd = fd;
+	}
 	/* rest pre-process */
 	if ((n = n_index(rest)) != -1)
 	{
@@ -51,6 +57,8 @@ int		get_next_line(const int fd, char **line)
 	/* rest init */
 	if (!rest)
 		rest = ft_strdup("");
+	else
+		rest = ft_strdup(rest);
 	r = 0;
 	ft_bzero(buff, BUFF_SIZE);
 	/* read */

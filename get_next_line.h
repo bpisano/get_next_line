@@ -6,7 +6,7 @@
 /*   By: bpisano <marvin@le-101.fr>                 +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2017/12/01 11:53:15 by bpisano      #+#   ##    ##    #+#       */
-/*   Updated: 2017/12/01 15:46:47 by bpisano     ###    #+. /#+    ###.fr     */
+/*   Updated: 2017/12/06 12:53:14 by bpisano     ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -17,7 +17,7 @@
 # include <unistd.h>
 # include "libft/libft.h"
 
-# define BUFF_SIZE 10
+# define BUFF_SIZE 3
 
 typedef struct		s_fd
 {

@@ -6,7 +6,7 @@
 /*   By: bpisano <marvin@le-101.fr>                 +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2017/12/01 12:16:30 by bpisano      #+#   ##    ##    #+#       */
-/*   Updated: 2017/12/01 15:29:39 by bpisano     ###    #+. /#+    ###.fr     */
+/*   Updated: 2017/12/06 13:17:40 by bpisano     ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -27,9 +27,14 @@ int		main(int ac, char **av)
 	int		l;
 	char 	*line;
 
-	if (ac < 2)
+	if (ac == 2)
 	{
-		get_next_line(0, &line);
+		fd = get_fd(av[1]);
+		while ((l = get_next_line(fd, &line)) == 1)
+		{
+			printf("%s\n", line);
+		}
+		printf("Final : %s\n", line);
 		return (0);
 	}
 	i = 1;
@@ -38,7 +43,7 @@ int		main(int ac, char **av)
 		fd = get_fd(av[i]);
 		while ((l = get_next_line(fd, &line)) == 1)
 		{
-			printf("%d : %s\n", l, line);
+			printf("%s", line);
 		}
 		i++;
 	}
