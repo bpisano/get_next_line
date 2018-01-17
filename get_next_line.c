@@ -6,7 +6,7 @@
 /*   By: bpisano <marvin@le-101.fr>                 +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2017/12/01 11:52:58 by bpisano      #+#   ##    ##    #+#       */
-/*   Updated: 2018/01/17 20:12:55 by jemagnie    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/01/17 20:40:24 by bpisano     ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -29,30 +29,17 @@ static int		n_index(const char *str)
 	return (-1);
 }
 
-static t_list    *current_file(int fd, t_list **file_lst)
+static t_list	*current_file(int fd, t_list **list)
 {
-	t_list    *current;
-
-	if (!*file_lst)
+	if (!*list)
 	{
-		*file_lst = ft_lstnew(NULL, 0);
-		(*file_lst)->content_size = (size_t)fd;
-		return (*file_lst);
+		*list = ft_lstnew(NULL, 0);
+		(*list)->content_size = fd;
+		return (*list);
 	}
-	current = *file_lst;
-	while (current)
-	{
-		if (current->content_size == (size_t)fd)
-			return (current);
-		current = current->next;
-	}
-	if (!current)
-	{
-		current = ft_lstnew(NULL, 0);
-		current->content_size = (size_t)fd;
-		ft_lstadd(file_lst, current);
-	}
-	return (current);
+	if ((*list)->content_size != (size_t)fd)
+		return (current_file(fd, &(*list)->next));
+	return (*list);
 }
 
 static int		read_rest(char **rest, char **line)
@@ -101,7 +88,7 @@ int				get_next_line(const int fd, char **line)
 		return (1);
 	if (!file->content)
 		file->content = ft_strdup("");
-    else
+	else
 		file->content = ft_strdup((char *)(file->content));
 	r = read_buff(fd, (char **)&(file->content));
 	if (read_rest((char **)&(file->content), line))
